@@ -10,7 +10,32 @@
 </head>
 <body>
     <div class="container">
-        
+        <form id="addBook" action="" method="post" onsubmit="return false">
+            <div class="title">
+                <label for="title">Book Title</label>
+                <input type="text" id="title" name="title">
+            </div>
+            <div class="author">
+                <label for="author">Author</label>
+                <input type="text" id="author" name="author">
+            </div>
+            <div class="numberOfPages">
+                <label for="numberOfPages">Number of Pages</label>
+                <input type="number" id="numberOfPages" name="numberOfPages">
+            </div>
+            <fieldset class="hasRead">
+                <legend>Read Yet?</legend>
+                <div>
+                    <input type="radio" id="read" name="hasRead" value="read">
+                    <label for="read">Read</label>
+                </div>
+                <div>
+                    <input type="radio" id="notRead" name="hasRead" value="notRead">
+                    <label for="notRead">Not Read</label>
+                </div>
+                <button type="submit" id="postBtn">Submit</button>
+            </fieldset>
+        </form>
     </div>
 </body>
 </html>
