@@ -23,7 +23,8 @@ function addBookToLibrary(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formProps = Object.fromEntries(formData);
-    console.log(formProps);
+    myLibrary.push(new Book(formProps.title, formProps.author, formProps.numberOfPages, formProps.hasRead));
+    console.log(myLibrary);
 }
 
 //formButton.addEventListener("click", addBookToLibrary);
