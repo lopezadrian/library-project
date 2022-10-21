@@ -39,7 +39,13 @@ function createCell(newBookRow, columnIndex, cellText) {
     newCell.appendChild(newCellText);
 }
 
-function createStatusCheckbox(newBookRow, readStatus) {
+function changeHasRead() {
+    const currentBookIndex = this.dataset.index;
+    myLibrary[currentBookIndex].hasRead = this.checked ? 'read' : 'notRead';
+    console.log(myLibrary);
+}
+
+function createStatusCheckbox(newBookRow, readStatus, bookNumber) {
     let readCell = newBookRow.insertCell(3);
 
     let checkbox = document.createElement('input');
@@ -47,6 +53,7 @@ function createStatusCheckbox(newBookRow, readStatus) {
     checkbox.name = 'status';
     checkbox.value = 'status';
     checkbox.id = 'status';
+    checkbox.dataset.index = bookNumber;
 
     if (readStatus === 'read') {
         checkbox.checked = true;
@@ -57,37 +64,76 @@ function createStatusCheckbox(newBookRow, readStatus) {
     label.appendChild(document.createTextNode('Read'));
     readCell.appendChild(checkbox);
     readCell.appendChild(label);
+
+    const readStatusCheckbox = container.querySelector(`#status[data-index="${bookNumber}"`);
+    readStatusCheckbox.addEventListener('change', changeHasRead);
+}
+
+function updateIndex() {
+    //const bookRowsToUpdate = container.querySelectorAll()
+    const checkboxesToUpdate = container.querySelectorAll('#status');
+    let i = 0;
+    checkboxesToUpdate.forEach(checkboxToUpdate => {
+        checkboxToUpdate.dataset.index = i;
+        i++;
+    });
+    const removeButtonsToUpdate = container.querySelectorAll('td[button]');
+    i = 0;
+    removeButtonsToUpdate.forEach(removeButtonToUpdate => {
+        removeButtonToUpdate.dataset.index = i;
+        i++;
+    });
+}
+
+function removeBook () {
+    const currentBookIndex = this.dataset.index;
+    myLibrary.splice(currentBookIndex, 1);
+    updateIndex();
+    this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode)
+    console.log(myLibrary);
+}
+
+function createRemoveButton(newBookRow, bookNumber) {
+    let removeButtonCell = newBookRow.insertCell(4);
+    let removeButton = document.createElement('button');
+    removeButton.dataset.index = bookNumber;
+    const removeButtonText = document.createTextNode('Remove Book');
+    removeButton.appendChild(removeButtonText);
+    removeButtonCell.appendChild(removeButton);
+
+    removeButton.addEventListener('click', removeBook);
 }
 
 function addBookToTable(currentBook, bookNumber) {
     let tableRef = document.querySelector('table');
     let newBookRow = tableRef.insertRow(bookNumber+1);
-    newBookRow.classList.add(`myLibrary[${bookNumber}]`);
+    newBookRow.className = `myLibrary[${bookNumber}]`;
 
     createCell(newBookRow, 0, currentBook.title);
     createCell(newBookRow, 1, currentBook.author);
     createCell(newBookRow, 2, currentBook.numberOfPages);
 
-    createStatusCheckbox(newBookRow, currentBook.hasRead);
+    createStatusCheckbox(newBookRow, currentBook.hasRead, bookNumber);
+    createRemoveButton(newBookRow, bookNumber);
 }
 
 function addBookToLibrary(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formProps = Object.fromEntries(formData);
-    myLibrary.push(new Book(formProps.title, formProps.author, formProps.numberOfPages, formProps.hasRead));
-    
-    addBookToTable(myLibrary[bookNumber], bookNumber);
+    currentBook = new Book(formProps.title, formProps.author, formProps.numberOfPages, formProps.hasRead);
+    myLibrary.push(currentBook);
+    currentBookIndex = myLibrary.indexOf(currentBook);
+    addBookToTable(currentBook, currentBookIndex);
     clearForm();
     bookNumber += 1;
-    console.log(myLibrary);
 }
 
 function showForm() {
     newBookButton.style.display = "none";
     form.style.display = "block";
 }
+
 form.addEventListener("submit", addBookToLibrary);
 newBookButton.addEventListener("click", showForm);
-console.log(myLibrary);
 
